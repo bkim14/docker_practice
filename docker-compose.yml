@@ -1,0 +1,25 @@
+version: "3"  #docker-compose version
+services:
+  node-app:
+    build: . # use current directories Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    depends_on:
+      - mongo  #it makes mongo service starts first #still potential crash # we should do something on app
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=bkim14
+      - MONGO_INITDB_ROOT_PASSWORD=mypassword
+    volumes:
+      - mongo-db:/data/db
+  redis:
+    image: redis
+
+
+
+volumes:
+  mongo-db:
