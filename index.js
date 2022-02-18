@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const redis = require('redis');
 let RedisStore = require('connect-redis')(session);
+const { REDIS_URL, REDIS_PORT, SESSION_SECRET } = require('./config/config');
+const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require('./config/config');
+
 let redisClient = redis.createClient({
   host: REDIS_URL,
   port:REDIS_PORT
@@ -10,10 +13,7 @@ let redisClient = redis.createClient({
 
 const app = express();
 
-const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require('./config/config');
-
 const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`;
-
 
 const connectWithRetry=()=>{
   mongoose.connect(mongoURL
@@ -28,7 +28,7 @@ const connectWithRetry=()=>{
 connectWithRetry();
 
 app.use(session({
-  store:new RedisStore({redisClient}),
+  store: new RedisStore({client:redisClient}),
   secret:SESSION_SECRET,
   cookie: {
     secure: false,
@@ -44,7 +44,6 @@ app.use(express.json());
 
 const postRouter=require('./routes/postRoutes');
 const userRouter=require('./routes/userRoutes');
-const { REDIS_URL, REDIS_PORT, SESSION_SECRET } = require('config/config');
 
 app.get("/",(req,res)=>{
   res.send("<h1>hi~~~!!!!</h1>");

@@ -18,3 +18,5 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=bkim14
       - MONGO_INITDB_ROOT_PASSWORD=mypassword
+  redis:
+    image: redis
